@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: f0fb846ab578e6b409dd4a4b60c795f3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Dark_Mat: {instanceID: 0}
+  - Light_Mat: {instanceID: 0}
+  - Highlight_Mat: {instanceID: 0}
+  - Bishop: {fileID: 6496766464627545643, guid: 57280623628f58b4582b7598359ff641,
+      type: 3}
+  - Rook: {instanceID: 0}
+  - Queen: {instanceID: 0}
+  - Knight: {instanceID: 0}
+  - King: {fileID: 5787652162104509709, guid: 3e60311ab37af6940a16c2bfc53e5959, type: 3}
+  - Pawn: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
