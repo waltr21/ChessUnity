@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.ServerClient
 {
-    class PacketBase
+    public class PacketBase
     {
         public PacketType type;
     }

@@ -34,6 +34,6 @@ public class Cell
 
     public void Travel()
     {
-        cellRef.position = Vector3.Lerp(cellRef.position, this.desiredPos, 0.1f);
+        cellRef.position = Vector3.Lerp(cellRef.position, this.desiredPos, 15f * Time.deltaTime);
     }
 }

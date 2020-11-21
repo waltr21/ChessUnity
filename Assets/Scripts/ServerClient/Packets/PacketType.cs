@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.ServerClient
 {
-    enum PacketType
+    public enum PacketType
     {
         Host,
         Join,
         Checkup,
-        Found,
-        NotFound,
         Error,
+        PlayerReady,
+        SetTurn,
         InitMove,
-        StandardMove
+        StandardMove,
+        Iwin,
+        Unused = -1
     }
 }

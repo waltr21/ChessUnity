@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.ServerClient
 {
-    class MovePacket : PacketBase
+    public class MovePacket : PacketBase
     {
         public string pieceId;
         public int fromRow;

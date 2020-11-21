@@ -11,10 +11,11 @@ namespace Assets.Scripts.ServerClient
         private TcpClient socketConnection;
         private Thread clientReceiveThread;
         private int port;
-        private string IP;
+        public string IP;
         public StartCanvas StartMenu;
         public int UserTeam;
         public Board BoardRef;
+        public bool connected;
 
         public UserClient()
         {
@@ -41,13 +42,14 @@ namespace Assets.Scripts.ServerClient
                 clientReceiveThread = new Thread(new ThreadStart(Listen));
                 clientReceiveThread.IsBackground = true;
                 clientReceiveThread.Start();
-                return true;
+                connected = true;
             }
             catch (Exception e)
             {
                 Debug.Log("On client connect exception " + e);
-                return false;
+                connected = false;
             }
+            return connected;
         }
 
         public void Listen()
@@ -113,19 +115,40 @@ namespace Assets.Scripts.ServerClient
             {
                 Debug.Log("Received data: " + data);
                 PacketBase temp = JsonUtility.FromJson<PacketBase>(data);
-                if (temp.type == PacketType.Found)
+                switch (temp.type)
                 {
-                    StartCanvas.SetGameFound(true);
+                    case PacketType.Join:
+                        StartCanvas.SetGameFound(true);
+                        break;
+                    //Host packet will be sent back if we have a successful game creation.
+                    case PacketType.Host:
+                        StartCanvas.SetGameFound(true);
+                        break;
+                    case PacketType.Error:
+                        ErrorPacket ep = JsonUtility.FromJson<ErrorPacket>(data);
+                        StartCanvas.SetError(ep.message);
+                        break;
+                    case PacketType.InitMove:
+                        lock (BoardRef.ServerMove)
+                        {
+                            BoardRef.ServerMove = JsonUtility.FromJson<MovePacket>(data);
+                        }
+                        break;
+                    case PacketType.StandardMove:
+                        lock (BoardRef.ServerMove)
+                        {
+                            BoardRef.ServerMove = JsonUtility.FromJson<MovePacket>(data);
+                        }
+                        break;
+                    case PacketType.SetTurn:
+                        SetTurnPacket stp = JsonUtility.FromJson<SetTurnPacket>(data);
+                        BoardRef.turn = stp.turn;
+                        break;
+                    // Unknown. Thow it out.
+                    default:
+                        break;
                 }
-                if (temp.type == PacketType.NotFound)
-                {
-                    StartCanvas.GameNotFound();
-                }
-                if (temp.type == PacketType.InitMove)
-                {
-                    MovePacket curMove = JsonUtility.FromJson<MovePacket>(data);
-                    BoardRef.AddPiece(BoardRef.King, curMove.toRow, curMove.toCol);
-                }
+                
             }
             catch(Exception e)
             {

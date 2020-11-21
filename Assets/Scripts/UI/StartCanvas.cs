@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using Assets.Scripts.ServerClient;
 using System.Collections;
 using System.IO;
+using System;
 
 public class StartCanvas : MonoBehaviour
 {
@@ -13,9 +14,12 @@ public class StartCanvas : MonoBehaviour
     public Button JoinButton;
     public InputField ServerName;
     public InputField Password;
+    public InputField IpOverride;
     public Scene GameScene;
     public static UserClient uc;
     private static bool GameFound;
+    public Text ErrorMessageText;
+    public static string errorMessage; 
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +29,8 @@ public class StartCanvas : MonoBehaviour
         GameFound = false;
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
+        errorMessage = "";
+        IpOverride.text = "10.0.0.37";
     }
 
     private void Update()
@@ -32,38 +38,59 @@ public class StartCanvas : MonoBehaviour
         if (GameFound)
         {
             SceneManager.LoadScene(1);
+            GameFound = false;
+        }
+        if (!errorMessage.Equals(ErrorMessageText.text))
+        {
+            ErrorMessageText.text = errorMessage;
         }
     }
 
     void HostClicked()
     {
         Debug.Log("Host clicked");
-        bool res = uc.ConnectToServer();
-        if (res)
+        if (!uc.connected)
+        {
+            OverrideIp();
+            uc.ConnectToServer();
+        }
+        if (uc.connected)
         {
             GameStartPacket gsp = new GameStartPacket(ServerName.text, Password.text);
             //Wait for client thread to set up socket connections. 
+            float stamp = Time.realtimeSinceStartup;
             while (!uc.isReady())
             {
+                if (Time.realtimeSinceStartup - stamp > 5) return;
                 continue;
             }
             uc.UserTeam = 0;
             uc.Send(gsp);
-            SceneManager.LoadScene(1);
         }
     }
     
     void JoinClicked()
     {
         Debug.Log("Join clicked");
-        bool res = uc.ConnectToServer();
+        bool res;
+        if (!uc.connected)
+        {
+            OverrideIp();
+            res = uc.ConnectToServer();
+        }
+        else
+        {
+            res = true;
+        }
         if (res)
         {
             GameStartPacket gsp = new GameStartPacket(ServerName.text, Password.text);
             gsp.type = PacketType.Join;
             //Wait for client thread to set up socket connections. 
+            float stamp = Time.realtimeSinceStartup;
             while (!uc.isReady())
             {
+                if (Time.realtimeSinceStartup - stamp > 5) return;
                 continue;
             }
             uc.UserTeam = 1;
@@ -76,10 +103,17 @@ public class StartCanvas : MonoBehaviour
         GameFound = b;
     }
 
-    public static void GameNotFound()
+    public static void SetError(string m)
     {
         //Some error message to the user..
-        Debug.Log("No game found.");
-        return;
+        errorMessage = m;
+    }
+
+    public void OverrideIp()
+    {
+        if (IpOverride.text.Length > 0)
+        {
+            uc.IP = IpOverride.text;
+        }
     }
 }
