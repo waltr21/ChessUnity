@@ -16,7 +16,7 @@ namespace Assets.Scripts.ServerClient
         SetTurn,
         InitMove,
         StandardMove,
-        Iwin,
+        ILose,
         Unused = -1
     }
 }

@@ -9,6 +9,7 @@ public class Cell
     public ChessPiece piece;
     public int OriginalMaterial;
     public Vector3 desiredPos;
+    public bool isHighlighted;
 
     public Cell(int row, int col, Transform cellRef)
     {
@@ -17,19 +18,28 @@ public class Cell
         this.cellRef = cellRef;
         this.desiredPos = cellRef.position;
         string matName = cellRef.GetComponent<Renderer>().material.name;
-        if (matName.ToLower().Contains("dark")) OriginalMaterial = 0;
-        else OriginalMaterial = 1;
+        if (matName.ToLower().Contains("dark"))
+        {
+            OriginalMaterial = 0;
+        }
+        else
+        {
+            OriginalMaterial = 1;
+        }
+        isHighlighted = false;
     }
 
     public void SetMaterial(Material m)
     {
         cellRef.GetComponent<Renderer>().material = m;
+        isHighlighted = true;
     }
 
     public void ResetHighlight(Material light, Material dark)
     {
         if (OriginalMaterial == 0) cellRef.GetComponent<Renderer>().material = dark;
         else cellRef.GetComponent<Renderer>().material = light;
+        isHighlighted = false;
     }
 
     public void Travel()

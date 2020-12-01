@@ -6,12 +6,20 @@ public class User_Actions : MonoBehaviour
 {
     public Camera cam;
     public GameObject camTri;
-    private Transform curHit;
     public float heightVal;
     public float speed;
     private float stamp;
     public Board board;
     public ChessPiece selected;
+
+    public Texture2D basic;
+    public Texture2D pointer;
+    private CursorMode cursorMode = CursorMode.ForceSoftware;
+    private Vector2 hotSpot = Vector2.zero;
+
+    //curHit for the cells
+    private Transform curHit;
+    private int cursorIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +29,7 @@ public class User_Actions : MonoBehaviour
         {
             camTri.transform.Rotate(new Vector3(0,180,0));
         }
+        SetBasic();
     }
 
     // Update is called once per frame
@@ -29,6 +38,24 @@ public class User_Actions : MonoBehaviour
         Animate();
         if (Input.GetMouseButtonDown(0))
             UserClick();
+    }
+
+    private void SetPointer()
+    {
+        if (cursorIndex != 1)
+        {
+            cursorIndex = 1;
+            Cursor.SetCursor(pointer, hotSpot, cursorMode);
+        }
+    }
+
+    private void SetBasic()
+    {
+        if (cursorIndex != 0)
+        {
+            cursorIndex = 0;
+            Cursor.SetCursor(basic, hotSpot, cursorMode);
+        }
     }
 
     private void UserClick()
@@ -50,18 +77,21 @@ public class User_Actions : MonoBehaviour
                         board.ShowValidCells(selected);
                         this.board.ResetAllCellPos();
                         this.board.UpdateGameState();
+                        this.board.ResetAllAnimations();
                     }
                 }
             }
             if (hit.transform.tag.Equals("Chess_Piece"))
             {
                 ChessPiece p = board.GetPiece(hit.transform.parent);
+                this.board.ResetAllAnimations();
+                
                 // Checking for turn + team of piece.
                 if (board.turn != board.team)
                 {
                     return;
                 }
-
+                p.SetAnimate();
                 if (p.team != board.team)
                 {
                     if (selected)
@@ -106,10 +136,6 @@ public class User_Actions : MonoBehaviour
             AnimatePieces(hit);
             AnimateCells(hit);
         }
-        //else if (selected != null)
-        //{
-        //    selected.transform.position = new Vector3(selected.transform.position.x, (heightVal + (Mathf.Sin((Time.time - stamp) * speed) * heightVal)), selected.transform.position.z);
-        //}
     }
 
     private void AnimateCells(RaycastHit hit)
@@ -119,14 +145,17 @@ public class User_Actions : MonoBehaviour
             if ((hit.transform != curHit) && curHit)
             {
                 var tempCell = this.board.GetCell(curHit);
-                if (tempCell != null) this.board.GetCell(curHit).desiredPos = new Vector3(curHit.position.x, 0, curHit.position.z);
-                
+                if (tempCell != null)
+                {
+                    tempCell.desiredPos = new Vector3(curHit.position.x, 0, curHit.position.z);
+                }
             }
             curHit = hit.transform;
-            Cell cell = this.board.GetCell(curHit);
-            if (cell.piece == null)
+            Cell cell = this.board.GetCell(hit.transform);
+            if (cell.piece == null && cell.isHighlighted)
             {
-                this.board.GetCell(curHit).desiredPos = new Vector3(curHit.position.x, 0.25f, curHit.position.z);
+                cell.desiredPos = new Vector3(curHit.position.x, 0.25f, curHit.position.z);
+                SetPointer();
             }
         }
     }
@@ -135,36 +164,18 @@ public class User_Actions : MonoBehaviour
     {
         if (board.turn != board.team)
         {
+            SetBasic();
             return;
         }
         if (hit.transform.tag.Equals("Chess_Piece"))
         {
             ChessPiece piece = this.board.GetPiece(hit.transform.parent);
             if (piece.captured) return;
-            //if (selectehit.transform == selected.transform) return;
-            if ((hit.transform.parent.transform != curHit) && curHit)
-            {
-                //normalize sin wave to start at 0. 
-                stamp = Time.time - ((1.5f * Mathf.PI) / speed);
-                this.board.ResetAllCellPos();
-            }
-            //Null safety for first hit.
-            if (curHit == null)
-            {
-                stamp = Time.time - ((1.5f * Mathf.PI) / speed);
-            }
-            if (piece && piece.team != this.board.team)
-            {
-                return;
-            }
-
-            curHit = hit.transform.parent.transform;
-
-            curHit.position = new Vector3(curHit.position.x, (heightVal + (Mathf.Sin((Time.time - stamp) * speed) * heightVal)), curHit.position.z);
+            SetPointer();
         }
-        //else if (selected != null)
-        //{
-        //    selected.transform.position = new Vector3(selected.transform.position.x, (heightVal + (Mathf.Sin((Time.time - stamp) * speed) * heightVal)), selected.transform.position.z);
-        //}
+        else
+        {
+            SetBasic();
+        }
     }
 }

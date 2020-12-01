@@ -19,7 +19,11 @@ public class StartCanvas : MonoBehaviour
     public static UserClient uc;
     private static bool GameFound;
     public Text ErrorMessageText;
-    public static string errorMessage; 
+    public static string errorMessage;
+    public Texture2D basic;
+    public Texture2D pointer;
+    private CursorMode cursorMode = CursorMode.ForceSoftware;
+    private Vector2 hotSpot = Vector2.zero;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +35,8 @@ public class StartCanvas : MonoBehaviour
         JoinButton.onClick.AddListener(JoinClicked);
         errorMessage = "";
         IpOverride.text = "10.0.0.37";
+        Cursor.SetCursor(basic, hotSpot, cursorMode);
+        
     }
 
     private void Update()

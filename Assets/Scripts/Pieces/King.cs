@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.ServerClient;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class King : ChessPiece
 
     public override bool MoveValid(int toRow, int toCol, bool move)
     {
-        if (board.GameState == 0)
+        if (board.GameState == GameState.InitialMoves)
         {
             if (base.InitMove(toRow, toCol))
             {
@@ -29,5 +30,13 @@ public class King : ChessPiece
 
         if (move) base.Move(toRow, toCol);
         return true;
+    }
+
+    public override void Capture()
+    {
+        captured = true;
+        desiredPos = capturedPos;
+
+        board.SendLose();
     }
 }

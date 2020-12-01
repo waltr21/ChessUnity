@@ -10,7 +10,7 @@ public class Board : MonoBehaviour
     public Material Light_Mat;
     public Material Highlight_Mat;
 
-    public int GameState;
+    public GameState GameState;
     public int team;
     public int turn;
 
@@ -36,7 +36,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        this.GameState = 0;
+        this.GameState = GameState.InitialMoves;
         size = 8;
         board = new Cell[size, size];
         for (int i = 0; i < size; i++)
@@ -71,6 +71,14 @@ public class Board : MonoBehaviour
         foreach (Cell c in board)
         {
             c.desiredPos = new Vector3(c.cellRef.position.x, 0, c.cellRef.position.z);
+        }
+    }
+
+    public void ResetAllAnimations()
+    {
+        foreach (ChessPiece p in allPieces)
+        {
+            p.ResetAnimation();
         }
     }
 
@@ -233,7 +241,7 @@ public class Board : MonoBehaviour
     public void UpdateGameState()
     {
         //Just for one side for now. 
-        if (GameState == 0) {
+        if (GameState == GameState.InitialMoves) {
             bool filled = true;
             if (team == 0)
             {
@@ -257,7 +265,7 @@ public class Board : MonoBehaviour
             }
             if (filled)
             {
-                GameState = 1;
+                GameState = GameState.Active;
                 turn = -1;
                 PacketBase pb = new PacketBase
                 {
@@ -308,7 +316,10 @@ public class Board : MonoBehaviour
                         }
                         break;
                     case PacketType.SetTurn:
-
+                        break;
+                    case PacketType.ILose:
+                        GameState = GameState.GameOver;
+                        break;
                     //Some unhandled packet information? Toss out?
                     default:
                         break;
@@ -325,7 +336,7 @@ public class Board : MonoBehaviour
         if (ClientEngine != null)
         {
             MovePacket curMove = new MovePacket(pieceId, fromRow, fromCol, toRow, toCol);
-            if (GameState == 0)
+            if (GameState == GameState.InitialMoves)
             {
                 curMove.type = PacketType.InitMove;
             }
@@ -339,9 +350,16 @@ public class Board : MonoBehaviour
         return true;
     }
 
+    public void SendLose()
+    {
+        PacketBase p = new PacketBase();
+        p.type = PacketType.ILose;
+        ClientEngine.Send(p);
+    }
+
     public void IncrTurn()
     {
-        if (GameState == 1)
+        if (GameState == GameState.Active)
         {
             turn++;
             if (turn >= 2)

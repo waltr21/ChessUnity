@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.ServerClient;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,10 @@ public class ChessPiece : MonoBehaviour
     public string Id;
     public Vector3 capturedPos;
     public bool captured = false;
+    public bool selected = false;
+    public float animateStamp;
+    private float speed = 5.0f;
+    private float heightVal = 0.25f;
 
     /**
      * 0 - Dead
@@ -23,6 +28,26 @@ public class ChessPiece : MonoBehaviour
     public void Update()
     {
         this.transform.position = Vector3.Lerp(this.transform.position, this.desiredPos, 5.0f * Time.deltaTime);
+        if (selected)
+        {
+            Animate();
+        }
+    }
+
+    public void Animate()
+    {
+        transform.position = new Vector3(transform.position.x, (heightVal + (Mathf.Sin((Time.time - animateStamp) * speed) * heightVal)), transform.position.z);
+    }
+
+    public void SetAnimate()
+    {
+        animateStamp = Time.time - ((1.5f * Mathf.PI) / speed);
+        selected = true;
+    }
+
+    public void ResetAnimation()
+    {
+        selected = false;
     }
 
     public ChessPiece()
@@ -38,7 +63,7 @@ public class ChessPiece : MonoBehaviour
         SetCapturedPos();
     }
 
-    public void Capture()
+    public virtual void Capture()
     {
         captured = true;
         desiredPos = capturedPos;
@@ -93,7 +118,7 @@ public class ChessPiece : MonoBehaviour
 
     public bool InitMove(int toRow, int toCol)
     {
-        if (board.GameState != 0) return false;
+        if (board.GameState != GameState.InitialMoves) return false;
 
         if (team == 0)
         {
