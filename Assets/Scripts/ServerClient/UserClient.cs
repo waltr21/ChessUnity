@@ -85,6 +85,13 @@ namespace Assets.Scripts.ServerClient
 
         public void Send(object message)
         {
+            Thread sendThread = new Thread(new ParameterizedThreadStart(SpawnSendThread));
+            sendThread.IsBackground = true;
+            sendThread.Start(message);
+        }
+
+        public void SpawnSendThread(object message)
+        {
             if (socketConnection == null)
             {
                 return;
@@ -141,8 +148,15 @@ namespace Assets.Scripts.ServerClient
                         }
                         break;
                     case PacketType.SetTurn:
-                        SetTurnPacket stp = JsonUtility.FromJson<SetTurnPacket>(data);
+                        SetTurnPacket stp;
+                        stp = JsonUtility.FromJson<SetTurnPacket>(data);
                         BoardRef.turn = stp.turn;
+                        break;
+                    case PacketType.ILose:
+                        lock (BoardRef.ServerMove)
+                        {
+                            BoardRef.ServerMove = JsonUtility.FromJson<MovePacket>(data);
+                        }
                         break;
                     // Unknown. Thow it out.
                     default:

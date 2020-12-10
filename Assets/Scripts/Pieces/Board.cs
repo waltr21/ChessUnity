@@ -21,6 +21,8 @@ public class Board : MonoBehaviour
     public GameObject King;
     public GameObject Pawn;
     public GameObject Unknown;
+    public GameEnd gameEndCanvas;
+
     private int PieceCount;
     private static UserClient ClientEngine;
 
@@ -319,6 +321,9 @@ public class Board : MonoBehaviour
                         break;
                     case PacketType.ILose:
                         GameState = GameState.GameOver;
+                        gameEndCanvas.SetEndMessage("You captured your opponents King!");
+                        gameEndCanvas.SetEndMessageGreen();
+                        gameEndCanvas.ShowCanvas(true);
                         break;
                     //Some unhandled packet information? Toss out?
                     default:
@@ -355,6 +360,10 @@ public class Board : MonoBehaviour
         PacketBase p = new PacketBase();
         p.type = PacketType.ILose;
         ClientEngine.Send(p);
+        GameState = GameState.GameOver;
+        gameEndCanvas.SetEndMessage("Your King has been captured!");
+        gameEndCanvas.SetEndMessageRed();
+        gameEndCanvas.ShowCanvas(true);
     }
 
     public void IncrTurn()

@@ -91,7 +91,7 @@ public class User_Actions : MonoBehaviour
                 {
                     return;
                 }
-                p.SetAnimate();
+
                 if (p.team != board.team)
                 {
                     if (selected)
@@ -113,6 +113,10 @@ public class User_Actions : MonoBehaviour
                     {
                         return;
                     }
+                }
+                else
+                {
+                    p.SetAnimate();
                 }
                 selected = board.GetPiece(hit.transform.parent);
                 board.ShowValidCells(selected);
@@ -136,6 +140,10 @@ public class User_Actions : MonoBehaviour
             AnimatePieces(hit);
             AnimateCells(hit);
         }
+        else
+        {
+            SetBasic();
+        }
     }
 
     private void AnimateCells(RaycastHit hit)
@@ -157,6 +165,10 @@ public class User_Actions : MonoBehaviour
                 cell.desiredPos = new Vector3(curHit.position.x, 0.25f, curHit.position.z);
                 SetPointer();
             }
+            else
+            {
+                SetBasic();
+            }
         }
     }
 
@@ -172,10 +184,6 @@ public class User_Actions : MonoBehaviour
             ChessPiece piece = this.board.GetPiece(hit.transform.parent);
             if (piece.captured) return;
             SetPointer();
-        }
-        else
-        {
-            SetBasic();
         }
     }
 }
