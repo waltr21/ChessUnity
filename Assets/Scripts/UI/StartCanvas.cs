@@ -34,7 +34,7 @@ public class StartCanvas : MonoBehaviour
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
         errorMessage = "";
-        IpOverride.text = "10.0.0.32";
+        IpOverride.text = "10.0.0.11";
         Cursor.SetCursor(basic, hotSpot, cursorMode);
         
     }
