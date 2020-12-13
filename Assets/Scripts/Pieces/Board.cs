@@ -28,6 +28,8 @@ public class Board : MonoBehaviour
 
     private List<ChessPiece> allPieces;
 
+    public LineRenderer MoveLine;
+
     /*
      * This represents the current move from the server. Put here to allow the Unity to process this move 
      * on the main thread. Will be set to null after the main thread does what it needs from its information. 
@@ -82,6 +84,12 @@ public class Board : MonoBehaviour
         {
             p.ResetAnimation();
         }
+    }
+
+    public void SetLinePos(Cell c1, Cell c2)
+    {
+        MoveLine.SetPosition(0, c1.cellRef.transform.position);
+        MoveLine.SetPosition(1, c2.cellRef.transform.position);
     }
 
     private void InitPieces()
@@ -310,6 +318,7 @@ public class Board : MonoBehaviour
                         {
                             //Because we are updating an oponent do not send info to server (false).
                             p.Move(ServerMove.toRow, ServerMove.toCol, false);
+                            SetLinePos(GetCell(ServerMove.fromRow, ServerMove.fromCol), GetCell(ServerMove.toRow, ServerMove.toCol));
                             IncrTurn();
                         }
                         else
