@@ -78,6 +78,7 @@ public class User_Actions : MonoBehaviour
                         this.board.ResetAllCellPos();
                         this.board.UpdateGameState();
                         this.board.ResetAllAnimations();
+                        this.board.CheckPromotion();
                     }
                 }
             }
@@ -103,6 +104,7 @@ public class User_Actions : MonoBehaviour
                             board.ShowValidCells(selected);
                             this.board.ResetAllCellPos();
                             this.board.UpdateGameState();
+                            this.board.CheckPromotion();
                         }
                         else
                         {

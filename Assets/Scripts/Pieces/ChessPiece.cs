@@ -130,4 +130,9 @@ public class ChessPiece : MonoBehaviour
         }
         return false;
     }
+
+    public void DeleteObject()
+    {
+        Destroy(gameObject);
+    }
 }

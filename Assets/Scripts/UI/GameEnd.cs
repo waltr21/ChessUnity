@@ -15,8 +15,10 @@ public class GameEnd : MonoBehaviour
     {
         //GreenCol = new Color(0.23f, 1f, 0.35f, 1f);
         //RedCol = new Color(1f, 0.38f, 0.28f, 1f);
-        GreenCol = new Color(1f, 0.99f, 0.84f, 1f);
-        RedCol = new Color(1f, 0.99f, 0.84f, 1f);
+        //GreenCol = new Color(1f, 0.99f, 0.84f, 1f);
+        //RedCol = new Color(1f, 0.99f, 0.84f, 1f);
+        RedCol = new Color(1f, 1f, 1f, 1f);
+        GreenCol = new Color(1f, 1f, 1f, 1f);
         ShowCanvas(false);
         MainMenu.onClick.AddListener(MainClicked);
     }

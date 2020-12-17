@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ServerClient;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -22,6 +23,7 @@ public class Board : MonoBehaviour
     public GameObject Pawn;
     public GameObject Unknown;
     public GameEnd gameEndCanvas;
+    public PawnPromotion pawnPromotionCanvas;
 
     private int PieceCount;
     private static UserClient ClientEngine;
@@ -68,6 +70,10 @@ public class Board : MonoBehaviour
             c.Travel();
         }
         ProcessServerMove();
+        if (Input.GetKeyDown("space"))
+        {
+            DevPlace();
+        }
     }
 
     public void ResetAllCellPos()
@@ -90,6 +96,32 @@ public class Board : MonoBehaviour
     {
         MoveLine.SetPosition(0, c1.cellRef.transform.position);
         MoveLine.SetPosition(1, c2.cellRef.transform.position);
+    }
+
+    private void DevPlace()
+    {
+        if (GameState == GameState.InitialMoves)
+        {
+            int startRow = 0;
+            int startCol = 0;
+            if (team == 1) startRow = 6;
+            foreach (ChessPiece p in allPieces)
+            {
+                if (p.team == team)
+                {
+                    p.Move(startRow, startCol, true);
+                    startCol++;
+                    if (startCol % 8 == 0 && startCol != 0)
+                    {
+                        startRow++;
+                        startCol = 0;
+                    }
+                    Thread.Sleep(200);
+                }
+            }
+            UpdateGameState();
+        }
+        
     }
 
     private void InitPieces()
@@ -385,5 +417,78 @@ public class Board : MonoBehaviour
                 turn = 0;
             }
         }
+    }
+
+    public ChessPiece CheckPromotion()
+    {
+        foreach (ChessPiece p in allPieces)
+        {
+            if (p is Pawn)
+            {
+                if (team == 0)
+                {
+                    if (p.row == size - 1)
+                    {
+                        pawnPromotionCanvas.ShowCanvas(true);
+                        return p;
+                    }
+                }
+                else
+                {
+                    if (p.row == 0)
+                    {
+                        pawnPromotionCanvas.ShowCanvas(true);
+                        return p;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // Check PawnPromotion.cs
+    public void PromotePawn(ButtonType type)
+    {
+        ChessPiece promotion = CheckPromotion();
+        ChessPiece replacement;
+        switch (type)
+        {
+            case ButtonType.Queen:
+                replacement = Instantiate(Queen).GetComponent<ChessPiece>();
+                break;
+            case ButtonType.Bishop:
+                replacement = Instantiate(Bishop).GetComponent<ChessPiece>();
+                break;
+            case ButtonType.Rook:
+                replacement = Instantiate(Rook).GetComponent<ChessPiece>();
+                break;
+            case ButtonType.Knight:
+                replacement = Instantiate(Knight).GetComponent<ChessPiece>();
+                break;
+            default:
+                replacement = null;
+                break;
+        }
+
+        //No clue how this would happen but sure.
+        if (replacement == null) return;
+
+        replacement.row = promotion.row;
+        replacement.col = promotion.col;
+        replacement.Id = promotion.Id;
+        replacement.board = this;
+        replacement.team = this.team;
+        replacement.SetCapturedPos();
+        //promotion = replacement;
+
+        board[replacement.row, replacement.col].piece = replacement;
+        SetPieceMaterial(replacement);
+        allPieces.Remove(promotion);
+        allPieces.Add(replacement);
+        replacement.Move(replacement.row, replacement.col, false);
+        promotion.DeleteObject();
+        //Idk why it is setting it to true, but forcing false here. 
+        replacement.captured = false;
     }
 }
