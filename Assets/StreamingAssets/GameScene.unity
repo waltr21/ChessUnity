@@ -4775,6 +4775,7 @@ MonoBehaviour:
   playerCam: {fileID: 963194228}
   mouseSense: 150
   TriPod: {fileID: 74607626}
+  ZoomIncr: 3
   reverse: 1
 --- !u!1 &1001301507
 GameObject:
@@ -5452,7 +5453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -6809,7 +6810,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -8098,8 +8099,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 1
+        time: 0.0044642854
+        value: 0.52173907
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -8111,7 +8112,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0.18161473, b: 0, a: 1}
+      key0: {r: 1, g: 0, b: 0, a: 1}
       key1: {r: 1, g: 0.18161473, b: 0, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
