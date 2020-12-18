@@ -90,7 +90,7 @@ public class GameCamera : MonoBehaviour
 
             //xTriRotation -= mouseY;
             yTriRotation -= mouseX;
-            TriPod.transform.rotation = Quaternion.Euler(0f, yTriRotation * -1, 0f);
+            TriPod.transform.rotation = Quaternion.Euler(TriPod.transform.rotation.x, yTriRotation * -1, 0f);
             defaultPos = playerCam.position;
         }
         else
