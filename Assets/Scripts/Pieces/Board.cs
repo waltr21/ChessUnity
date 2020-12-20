@@ -342,6 +342,10 @@ public class Board : MonoBehaviour
                             p.Id = ServerMove.pieceId;
                             SetPieceMaterial(p);
                             p.SetCapturedPos();
+                            if (p.team == 1)
+                            {
+                                p.transform.Rotate(0, 180, 0);
+                            }
                         }
                         break;
                     case PacketType.StandardMove:

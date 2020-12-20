@@ -9,9 +9,8 @@ public class GameEnd : MonoBehaviour
     public TextMeshProUGUI Label;
     public GameObject EndGameCanvas;
     public Button MainMenu;
-    private Vector3 NormalPos;
-    private Vector3 OffScreenPos;
-    private Vector3 DesiredPos;
+    private Vector3 NormalPos, OffScreenPos, DesiredPos;
+    public RectTransform EndGameTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -23,21 +22,20 @@ public class GameEnd : MonoBehaviour
         RedCol = new Color(1f, 1f, 1f, 1f);
         GreenCol = new Color(1f, 1f, 1f, 1f);
         MainMenu.onClick.AddListener(MainClicked);
-        //NormalPos = this;
-        OffScreenPos = new Vector3(NormalPos.x, -500f, NormalPos.z);
-        DesiredPos = OffScreenPos;
+        NormalPos = EndGameTransform.localPosition;
+        OffScreenPos = new Vector3(NormalPos.x, 600f, NormalPos.z);
+        EndGameTransform.localPosition = OffScreenPos;
         ShowCanvas(false);
     }
 
     void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, DesiredPos, 5.0f * Time.deltaTime);
+        EndGameTransform.localPosition = Vector3.Lerp(EndGameTransform.localPosition, DesiredPos, 5.0f * Time.deltaTime);
+        //EndGameTransform.SetPositionAndRotation(temp, EndGameTransform.rotation);
     }
 
     public void ShowCanvas(bool b)
     {
-        EndGameCanvas.SetActive(b);
-        return;
         if (b)
         {
             DesiredPos = NormalPos;

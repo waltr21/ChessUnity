@@ -5,6 +5,8 @@ using Assets.Scripts.ServerClient;
 using System.Collections;
 using System.IO;
 using System;
+using TMPro;
+using System.Collections.Generic;
 
 public class StartCanvas : MonoBehaviour
 {
@@ -12,8 +14,8 @@ public class StartCanvas : MonoBehaviour
     private string[] scenePaths;
     public Button HostButton;
     public Button JoinButton;
-    public InputField ServerName;
-    public InputField Password;
+    public TMP_InputField ServerName;
+    public TMP_InputField Password;
     public InputField IpOverride;
     public Scene GameScene;
     public static UserClient uc;
@@ -25,6 +27,9 @@ public class StartCanvas : MonoBehaviour
     private CursorMode cursorMode = CursorMode.ForceSoftware;
     private Vector2 hotSpot = Vector2.zero;
 
+    private int buttonIndex;
+    private List<TMP_InputField> allFields;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,9 +39,20 @@ public class StartCanvas : MonoBehaviour
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
         errorMessage = "";
-        IpOverride.text = "10.0.0.14";
+        IpOverride.text = "10.0.0.18";
         Cursor.SetCursor(basic, hotSpot, cursorMode);
-        
+        buttonIndex = 0;
+        allFields = new List<TMP_InputField>();
+        allFields.Add(ServerName);
+        allFields.Add(Password);
+        TabInputs();
+    }
+
+    private void TabInputs()
+    {
+        allFields[buttonIndex].Select();
+        buttonIndex++;
+        if (buttonIndex >= allFields.Count) buttonIndex = 0;
     }
 
     private void Update()
@@ -49,6 +65,10 @@ public class StartCanvas : MonoBehaviour
         if (!errorMessage.Equals(ErrorMessageText.text))
         {
             ErrorMessageText.text = errorMessage;
+        }
+        if (Input.GetKeyDown("tab"))
+        {
+            TabInputs();
         }
     }
 
