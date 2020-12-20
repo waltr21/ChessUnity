@@ -5437,7 +5437,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -130}
-  m_SizeDelta: {x: 800, y: 450}
+  m_SizeDelta: {x: 640, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1074680517
 MonoBehaviour:
@@ -5458,7 +5458,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 06c585548786717469b2ec0c4c437e58, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6205d1f273e1af44195d9b9540407b5c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9587,6 +9587,7 @@ MonoBehaviour:
   Label: {fileID: 190829280}
   EndGameCanvas: {fileID: 1074680515}
   MainMenu: {fileID: 1506067619}
+  EndGameTransform: {fileID: 1074680516}
 --- !u!114 &1955499850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9605,6 +9606,7 @@ MonoBehaviour:
   Bishop: {fileID: 2059570042}
   Knight: {fileID: 500848644}
   BoardRef: {fileID: 762711887}
+  PromotionTransform: {fileID: 1405657751}
 --- !u!1 &1959278224
 GameObject:
   m_ObjectHideFlags: 0
