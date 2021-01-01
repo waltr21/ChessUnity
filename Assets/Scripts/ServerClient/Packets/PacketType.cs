@@ -17,6 +17,7 @@ namespace Assets.Scripts.ServerClient
         InitMove,
         StandardMove,
         ILose,
+        GameStart,
         Unused = -1
     }
 }

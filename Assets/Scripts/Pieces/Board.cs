@@ -42,7 +42,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        this.GameState = GameState.InitialMoves;
+        this.GameState = GameState.WaitingToStart;
         size = 8;
         board = new Cell[size, size];
         for (int i = 0; i < size; i++)
@@ -61,6 +61,10 @@ public class Board : MonoBehaviour
         ServerMove = new MovePacket("",0,0,0,0);
         ServerMove.type = PacketType.Unused;
         InitPieces();
+        if (team != 0)
+        {
+            GameState = GameState.InitialMoves;
+        }
     }
 
     public void Update()

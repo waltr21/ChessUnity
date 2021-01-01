@@ -25,6 +25,11 @@ public class ChessPiece : MonoBehaviour
      **/
     public int state;
 
+    public void Start()
+    {
+        this.transform.position = new Vector3(this.transform.position.x, 50F, this.transform.position.z);
+    }
+
     public void Update()
     {
         this.transform.position = Vector3.Lerp(this.transform.position, this.desiredPos, 5.0f * Time.deltaTime);
@@ -106,6 +111,7 @@ public class ChessPiece : MonoBehaviour
     public virtual bool MoveValid(int toRow, int toCol, bool move)
     {
         if (captured) return false;
+        if (board.GameState == GameState.WaitingToStart) return false;
         if (toRow > board.size - 1 || toRow < 0) return false;
         if (toCol > board.size - 1 || toCol < 0) return false;
         if (this.row == toRow && this.col == toCol) return false;

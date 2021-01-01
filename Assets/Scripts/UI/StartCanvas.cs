@@ -2,9 +2,6 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Assets.Scripts.ServerClient;
-using System.Collections;
-using System.IO;
-using System;
 using TMPro;
 using System.Collections.Generic;
 
@@ -39,7 +36,7 @@ public class StartCanvas : MonoBehaviour
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
         errorMessage = "";
-        IpOverride.text = "10.0.0.18";
+        IpOverride.text = "10.0.0.30";
         Cursor.SetCursor(basic, hotSpot, cursorMode);
         buttonIndex = 0;
         allFields = new List<TMP_InputField>();

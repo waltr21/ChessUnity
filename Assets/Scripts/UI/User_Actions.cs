@@ -124,7 +124,10 @@ public class User_Actions : MonoBehaviour
                 board.ShowValidCells(selected);
             }
         }
-        return;
+        else
+        {
+            this.board.ResetAllAnimations();
+        }
     }
 
     /* For the love of god redo this.

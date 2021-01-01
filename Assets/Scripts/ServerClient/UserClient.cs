@@ -152,6 +152,12 @@ namespace Assets.Scripts.ServerClient
                         stp = JsonUtility.FromJson<SetTurnPacket>(data);
                         BoardRef.turn = stp.turn;
                         break;
+                    case PacketType.GameStart:
+                        if (BoardRef.GameState == GameState.WaitingToStart)
+                        {
+                            BoardRef.GameState = GameState.InitialMoves;
+                        }
+                        break;
                     case PacketType.ILose:
                         lock (BoardRef.ServerMove)
                         {
