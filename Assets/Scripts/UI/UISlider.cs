@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI
 {
-    public class Slider : MonoBehaviour
+    public class UISlider : MonoBehaviour
     {
-        private Vector3 NormalPos, OffScreenPos, DesiredPos;
+        public Vector3 NormalPos, OffScreenPos, DesiredPos;
         private RectTransform TransformObject;
         public float SlideSpeed = 5.0f;
 
@@ -13,7 +13,7 @@ namespace Assets.Scripts.UI
         {
             TransformObject = t;
             Vector3 temp = this.TransformObject.localPosition;
-            SetPositions(temp, new Vector3(temp.x, 100f, temp.z));
+            SetPositions(temp, new Vector3(temp.x, 900f, temp.z));
             DesiredPos = NormalPos;
             return;
         }
@@ -33,6 +33,8 @@ namespace Assets.Scripts.UI
             }
             DesiredPos = OffScreenPos;
         }
+
+        
 
         public void SetPositions(Vector3 normal, Vector3 offScreen)
         {

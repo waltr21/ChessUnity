@@ -3,7 +3,7 @@ using TMPro;
 using Assets.Scripts.UI;
 using Assets.Scripts.ServerClient;
 
-public class WaitingPlayer : Slider
+public class WaitingPlayer : UISlider
 {
     public TMP_Text WaitingText;
     private string ogText;

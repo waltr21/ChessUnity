@@ -1,15 +1,15 @@
-﻿using TMPro;
+﻿using Assets.Scripts.UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameEnd : MonoBehaviour
+public class GameEnd : UISlider
 {
     private Color GreenCol, RedCol;
     public TextMeshProUGUI Label;
     public GameObject EndGameCanvas;
     public Button MainMenu;
-    private Vector3 NormalPos, OffScreenPos, DesiredPos;
     public RectTransform EndGameTransform;
 
     // Start is called before the first frame update
@@ -22,26 +22,10 @@ public class GameEnd : MonoBehaviour
         RedCol = new Color(1f, 1f, 1f, 1f);
         GreenCol = new Color(1f, 1f, 1f, 1f);
         MainMenu.onClick.AddListener(MainClicked);
-        NormalPos = EndGameTransform.localPosition;
-        OffScreenPos = new Vector3(NormalPos.x, 600f, NormalPos.z);
-        EndGameTransform.localPosition = OffScreenPos;
+
+        SetTransformObject(EndGameTransform);
         ShowCanvas(false);
-    }
-
-    void Update()
-    {
-        EndGameTransform.localPosition = Vector3.Lerp(EndGameTransform.localPosition, DesiredPos, 5.0f * Time.deltaTime);
-        //EndGameTransform.SetPositionAndRotation(temp, EndGameTransform.rotation);
-    }
-
-    public void ShowCanvas(bool b)
-    {
-        if (b)
-        {
-            DesiredPos = NormalPos;
-            return;
-        }
-        DesiredPos = OffScreenPos;
+        EndGameTransform.localPosition = OffScreenPos;
     }
 
     public void SetEndMessage(string m)
