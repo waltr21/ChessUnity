@@ -55,6 +55,8 @@ ExportedObj/
 # Unity3D generated file on crash reports
 sysinfo.txt
 
+AWS_Creds.config
+
 # Builds
 *.apk
 *.aab

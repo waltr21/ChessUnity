@@ -6,7 +6,9 @@ using Amazon.Runtime;
 using Assets.Scripts.ServerClient;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
+
 
 public class DBConnection
 {
@@ -23,9 +25,26 @@ public class DBConnection
         AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
         clientConfig.RegionEndpoint = RegionEndpoint.USWest2;
 
+        var creds = GetAWSCreds();
         //Creds for user with basically no permissions. May need to change to congnito? 
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials("AKIAYBFC52UJ6CT6SGX5", "cRJEUxDrxkhHEhD8sARj1hkPzXQ/0LRmmpzaZDkn");
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(creds.Item1, creds.Item2);
         Client = new AmazonDynamoDBClient(awsCredentials, RegionEndpoint.USWest2);
+    }
+
+    private (string,string) GetAWSCreds()
+    {
+        try
+        {
+            var doc = new XmlDocument();
+            doc.Load("Assets\\Scripts\\ServerClient\\AWS_Creds.config");
+            XmlElement ak = (XmlElement) doc.SelectSingleNode(string.Format("configuration/AWSSettings/add[@key='{0}']", "AccessKey"));
+            XmlElement sk = (XmlElement)doc.SelectSingleNode(string.Format("configuration/AWSSettings/add[@key='{0}']", "SecretKey"));
+            return (ak.Attributes["value"].Value, sk.Attributes["value"].Value);
+        }
+        catch (System.IO.FileNotFoundException e)
+        {
+            throw new Exception("No configuration file found.", e);
+        }
     }
 
     public void ListTables()

@@ -661,6 +661,7 @@ MonoBehaviour:
   GameScene:
     m_Handle: 0
   ErrorMessageText: {fileID: 1449334611}
+  AWSRef: {fileID: 1590714002}
   basic: {fileID: 2800000, guid: e2997467327baf24995be3180f1be494, type: 3}
   pointer: {fileID: 2800000, guid: 1e93844dddb427048b04fb6a78cbda3a, type: 3}
 --- !u!1 &580216135
@@ -2289,6 +2290,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1590714002
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1590714003}
+  m_Layer: 0
+  m_Name: AWS_Ref
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1590714003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590714002}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1024.386, y: 377.24854, z: 471.7595}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1898754265
 GameObject:
   m_ObjectHideFlags: 0
