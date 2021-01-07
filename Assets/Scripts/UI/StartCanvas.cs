@@ -19,6 +19,8 @@ public class StartCanvas : MonoBehaviour
     private static bool GameFound;
     public Text ErrorMessageText;
     public static string errorMessage;
+    public GameObject AWSRef;
+
     public Texture2D basic;
     public Texture2D pointer;
     private CursorMode cursorMode = CursorMode.ForceSoftware;
@@ -30,13 +32,13 @@ public class StartCanvas : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        uc = new UserClient();
+        uc = new UserClient(AWSRef);
         uc.StartMenu = this;
         GameFound = false;
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
         errorMessage = "";
-        IpOverride.text = "10.0.0.34";
+        IpOverride.text = "";
         Cursor.SetCursor(basic, hotSpot, cursorMode);
         buttonIndex = 0;
         allFields = new List<TMP_InputField>();

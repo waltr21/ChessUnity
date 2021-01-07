@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,11 +17,27 @@ namespace Assets.Scripts.ServerClient
         public int UserTeam;
         public Board BoardRef;
         public bool connected;
+        public bool AWSReached;
 
-        public UserClient()
+        // GameObject is used to pass to DB for AWS to not freak on the main thread. Idk why. Ask Bezos...
+        public UserClient(GameObject temp)
         {
             port = 9876;
             IP = "127.0.0.1";
+            AWSReached = false;
+            connected = false;
+            DBConnection db = new DBConnection(temp, this);
+            db.LoadServers();
+        }
+
+        public void ProcessServers(List<(string, int)> servers)
+        {
+            foreach (var info in servers)
+            {
+                IP = info.Item1;
+                port = info.Item2;
+            }
+            AWSReached = true;
         }
 
         public UserClient(string ip, int port)
