@@ -25,12 +25,14 @@ public class Board : MonoBehaviour
     public GameEnd gameEndCanvas;
     public PawnPromotion pawnPromotionCanvas;
 
-    private int PieceCount;
+    //private int PieceCount;
+    private List<int> PieceIds;
     private static UserClient ClientEngine;
 
     private List<ChessPiece> allPieces;
 
     public LineRenderer MoveLine;
+    private System.Random rnd;
 
     /*
      * This represents the current move from the server. Put here to allow the Unity to process this move 
@@ -42,6 +44,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
+        rnd = new System.Random();
         this.GameState = GameState.WaitingToStart;
         size = 8;
         board = new Cell[size, size];
@@ -53,17 +56,27 @@ public class Board : MonoBehaviour
             }
         }
         allPieces = new List<ChessPiece>();
+        ResetPieceIds();
 
         ClientEngine = StartCanvas.uc;
         ClientEngine.BoardRef = this;
         this.team = ClientEngine.UserTeam;
         this.turn = this.team;
-        ServerMove = new MovePacket("",0,0,0,0);
+        ServerMove = new MovePacket("", 0, 0, 0, 0);
         ServerMove.type = PacketType.Unused;
         InitPieces();
         if (team != 0)
         {
             GameState = GameState.InitialMoves;
+        }
+    }
+
+    private void ResetPieceIds()
+    {
+        PieceIds = new List<int>();
+        for (int i = 0; i < 16; i++)
+        {
+            PieceIds.Add(i);
         }
     }
 
@@ -166,11 +179,16 @@ public class Board : MonoBehaviour
         {
             throw new System.Exception("Team value invalid.");
         }
-        PieceCount = 0;
+        ResetPieceIds();
     }
 
     public ChessPiece AddPiece(GameObject type, int row, int col)
     {
+        //Select the randomID for the piece.
+        int idIndex = rnd.Next(0, PieceIds.Count);
+        int tempId = PieceIds[idIndex];
+        PieceIds.RemoveAt(idIndex);
+
         var result = Instantiate(type).GetComponent<ChessPiece>();
         result.team = this.team;
         result.row = row;
@@ -178,8 +196,7 @@ public class Board : MonoBehaviour
         result.board = this;
         result.Move(result.row, result.col, false);
         board[result.row, result.col].piece = result;
-        result.SetId(PieceCount);
-        PieceCount++;
+        result.SetId(tempId);
         allPieces.Add(result);
         SetPieceMaterial(result);
         return result;

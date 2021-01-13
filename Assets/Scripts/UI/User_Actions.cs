@@ -11,6 +11,7 @@ public class User_Actions : MonoBehaviour
     private float stamp;
     public Board board;
     public ChessPiece selected;
+    public DiamondMark diamond;
 
     public Texture2D basic;
     public Texture2D pointer;
@@ -148,6 +149,7 @@ public class User_Actions : MonoBehaviour
         else
         {
             SetBasic();
+            diamond.Hide(true);
         }
     }
 
@@ -165,6 +167,18 @@ public class User_Actions : MonoBehaviour
             }
             curHit = hit.transform;
             Cell cell = this.board.GetCell(hit.transform);
+
+            //Diamond logic
+            if (cell.piece != null)
+            {
+                diamond.SetDesired(cell.piece);
+            }
+            else
+            {
+                diamond.Hide(true);
+            }
+
+            //Pointer logic
             if (cell.piece == null && cell.isHighlighted)
             {
                 cell.desiredPos = new Vector3(curHit.position.x, 0.25f, curHit.position.z);
@@ -174,6 +188,7 @@ public class User_Actions : MonoBehaviour
             {
                 SetBasic();
             }
+            
         }
     }
 
@@ -188,6 +203,7 @@ public class User_Actions : MonoBehaviour
         {
             ChessPiece piece = this.board.GetPiece(hit.transform.parent);
             if (piece.captured) return;
+            diamond.SetDesired(piece);
             SetPointer();
         }
     }

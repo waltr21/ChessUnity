@@ -32,13 +32,13 @@ public class StartCanvas : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        errorMessage = "";
+        IpOverride.text = "";
         uc = new UserClient(AWSRef);
         uc.StartMenu = this;
         GameFound = false;
         HostButton.onClick.AddListener(HostClicked);
         JoinButton.onClick.AddListener(JoinClicked);
-        errorMessage = "";
-        IpOverride.text = "";
         Cursor.SetCursor(basic, hotSpot, cursorMode);
         buttonIndex = 0;
         allFields = new List<TMP_InputField>();
@@ -74,21 +74,17 @@ public class StartCanvas : MonoBehaviour
     void HostClicked()
     {
         Debug.Log("Host clicked");
-        if (!uc.connected)
-        {
-            OverrideIp();
-            uc.ConnectToServer();
-        }
-        if (uc.connected)
+        OverrideIp();
+        if (uc.Status == ClientStatus.Connected)
         {
             GameStartPacket gsp = new GameStartPacket(ServerName.text, Password.text);
             //Wait for client thread to set up socket connections. 
-            float stamp = Time.realtimeSinceStartup;
-            while (!uc.isReady())
-            {
-                if (Time.realtimeSinceStartup - stamp > 5) return;
-                continue;
-            }
+            //float stamp = Time.realtimeSinceStartup;
+            //while (!uc.isReady())
+            //{
+            //    if (Time.realtimeSinceStartup - stamp > 5) return;
+            //    continue;
+            //}
             uc.UserTeam = 0;
             uc.Send(gsp);
         }
@@ -97,27 +93,18 @@ public class StartCanvas : MonoBehaviour
     void JoinClicked()
     {
         Debug.Log("Join clicked");
-        bool res;
-        if (!uc.connected)
-        {
-            OverrideIp();
-            res = uc.ConnectToServer();
-        }
-        else
-        {
-            res = true;
-        }
-        if (res)
+        OverrideIp();
+        if (uc.Status == ClientStatus.Connected)
         {
             GameStartPacket gsp = new GameStartPacket(ServerName.text, Password.text);
             gsp.type = PacketType.Join;
             //Wait for client thread to set up socket connections. 
-            float stamp = Time.realtimeSinceStartup;
-            while (!uc.isReady())
-            {
-                if (Time.realtimeSinceStartup - stamp > 5) return;
-                continue;
-            }
+            //float stamp = Time.realtimeSinceStartup;
+            //while (!uc.isReady())
+            //{
+            //    if (Time.realtimeSinceStartup - stamp > 5) return;
+            //    continue;
+            //}
             uc.UserTeam = 1;
             uc.Send(gsp);
         }
@@ -139,6 +126,7 @@ public class StartCanvas : MonoBehaviour
         if (IpOverride.text.Length > 0)
         {
             uc.IP = IpOverride.text;
+            uc.ConnectToServer();
         }
     }
 }

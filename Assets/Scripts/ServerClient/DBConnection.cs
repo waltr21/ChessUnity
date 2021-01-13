@@ -1,4 +1,5 @@
 ﻿using Amazon;
+using Amazon.CognitoIdentity;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
@@ -19,74 +20,58 @@ public class DBConnection
     // Start is called before the first frame update
     public DBConnection(GameObject temp, UserClient uc)
     {
-        User = uc;
-        UnityInitializer.AttachToGameObject(temp);
-        AWSConfigs.HttpClient = AWSConfigs.HttpClientOption.UnityWebRequest;
-        AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
-        clientConfig.RegionEndpoint = RegionEndpoint.USWest2;
-
-        var creds = GetAWSCreds();
-        //Creds for user with basically no permissions. May need to change to congnito? 
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(creds.Item1, creds.Item2);
-        Client = new AmazonDynamoDBClient(awsCredentials, RegionEndpoint.USWest2);
-    }
-
-    private (string,string) GetAWSCreds()
-    {
         try
         {
-            var doc = new XmlDocument();
-            doc.Load("Assets\\Scripts\\ServerClient\\AWS_Creds.config");
-            XmlElement ak = (XmlElement) doc.SelectSingleNode(string.Format("configuration/AWSSettings/add[@key='{0}']", "AccessKey"));
-            XmlElement sk = (XmlElement)doc.SelectSingleNode(string.Format("configuration/AWSSettings/add[@key='{0}']", "SecretKey"));
-            return (ak.Attributes["value"].Value, sk.Attributes["value"].Value);
+            User = uc;
+            UnityInitializer.AttachToGameObject(temp);
+            AWSConfigs.HttpClient = AWSConfigs.HttpClientOption.UnityWebRequest;
+            AmazonDynamoDBConfig clientConfig = new AmazonDynamoDBConfig();
+            clientConfig.RegionEndpoint = RegionEndpoint.USWest2;
+
+            //Creds for user with basically no permissions. May need to change to congnito? 
+            var cognitoCreds = new CognitoAWSCredentials(AWSIdentity.PoolId, RegionEndpoint.USWest2);
+            Client = new AmazonDynamoDBClient(cognitoCreds, RegionEndpoint.USWest2);
         }
-        catch (System.IO.FileNotFoundException e)
+        catch (Exception e)
         {
-            throw new Exception("No configuration file found.", e);
+            uc.SetError(e.Message);
         }
-    }
-
-    public void ListTables()
-    {
-        var request = new ListTablesRequest
-        {
-            ExclusiveStartTableName = "ServerAdvertisement",
-            Limit = 1 // Page size.
-        };
-
-        TableConfig request2 = new TableConfig("ServerAdvertisement");
-
-        Table.LoadTableAsync(Client, "ServerAdvertisement", (res) => { 
-            ServerTable = res.Result;
-            LoadServers();
-        });
     }
 
     public void LoadServers()
     {
-        List<(string, int)> servers = new List<(string, int)>();
-        ScanRequest request = new ScanRequest
+        try
         {
-            TableName = "ServerAdvertisement",
-            ProjectionExpression = "IP, Port"
-        };
 
-        Client.ScanAsync(request, (res) => {
-            foreach (Dictionary<string, AttributeValue> item in res.Response.Items)
+
+            List<(string, int)> servers = new List<(string, int)>();
+            ScanRequest request = new ScanRequest
             {
-                string ip = "";
-                int port = 0;
-                foreach (var kvp in item)
+                TableName = "ServerAdvertisement",
+                ProjectionExpression = "IP, Port"
+            };
+
+            Client.ScanAsync(request, (res) =>
+            {
+                foreach (Dictionary<string, AttributeValue> item in res.Response.Items)
                 {
-                    if (kvp.Value.S != null) ip = kvp.Value.S;
-                    if (kvp.Value.N != null) port = Int32.Parse(kvp.Value.N);
+                    string ip = "";
+                    int port = 0;
+                    foreach (var kvp in item)
+                    {
+                        if (kvp.Value.S != null) ip = kvp.Value.S;
+                        if (kvp.Value.N != null) port = Int32.Parse(kvp.Value.N);
+                    }
+                    (string, int) t = (ip, port);
+                    servers.Add(t);
+                    Debug.Log(t);
                 }
-                (string, int) t = (ip, port);
-                servers.Add(t);
-                Debug.Log(t);
-            }
-            User.ProcessServers(servers);
-        });
+                User.ProcessServers(servers);
+            });
+        }
+        catch(Exception e)
+        {
+            User.SetError(e.Message);
+        }
     }
 }

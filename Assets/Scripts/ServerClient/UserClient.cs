@@ -16,16 +16,14 @@ namespace Assets.Scripts.ServerClient
         public StartCanvas StartMenu;
         public int UserTeam;
         public Board BoardRef;
-        public bool connected;
-        public bool AWSReached;
+        public ClientStatus Status;
 
         // GameObject is used to pass to DB for AWS to not freak on the main thread. Idk why. Ask Bezos...
         public UserClient(GameObject temp)
         {
             port = 9876;
             IP = "127.0.0.1";
-            AWSReached = false;
-            connected = false;
+            Status = ClientStatus.ConnectingToAWS;
             DBConnection db = new DBConnection(temp, this);
             db.LoadServers();
         }
@@ -37,7 +35,8 @@ namespace Assets.Scripts.ServerClient
                 IP = info.Item1;
                 port = info.Item2;
             }
-            AWSReached = true;
+            Status = ClientStatus.ConnectingToServer;
+            ConnectToServer();
         }
 
         public UserClient(string ip, int port)
@@ -52,21 +51,28 @@ namespace Assets.Scripts.ServerClient
             return false;
         }
 
-        public bool ConnectToServer()
+        public void SetError(string m)
+        {
+            StartCanvas.SetError(m);
+        }
+
+        public void ConnectToServer()
         {
             try
             {
+                if (socketConnection != null)
+                {
+                    socketConnection.Close();
+                }
                 clientReceiveThread = new Thread(new ThreadStart(Listen));
                 clientReceiveThread.IsBackground = true;
                 clientReceiveThread.Start();
-                connected = true;
             }
             catch (Exception e)
             {
                 Debug.Log("On client connect exception " + e);
-                connected = false;
+                Status = ClientStatus.Error;
             }
-            return connected;
         }
 
         public void Listen()
@@ -81,6 +87,7 @@ namespace Assets.Scripts.ServerClient
                     using (NetworkStream stream = socketConnection.GetStream())
                     {
                         int length;
+                        Status = ClientStatus.Connected;
                         // Read incomming stream into byte arrary. 					
                         while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                         {
@@ -96,6 +103,7 @@ namespace Assets.Scripts.ServerClient
             catch (SocketException socketException)
             {
                 Debug.Log("Socket exception: " + socketException);
+                Status = ClientStatus.Error;
                 throw socketException;
             }
         }
@@ -193,4 +201,12 @@ namespace Assets.Scripts.ServerClient
             }
         }
     }
+}
+
+public enum ClientStatus
+{
+    ConnectingToAWS,
+    ConnectingToServer,
+    Connected,
+    Error
 }
