@@ -10862,6 +10862,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   desiredPos: {x: 0, y: 0, z: 0}
+  desiredScale: {x: 0, y: 0, z: 0}
+  originalScale: {x: 0, y: 0, z: 0}
+  friendMat: {fileID: 2100000, guid: 4b6a5241028937e48a337dfe5295b225, type: 2}
+  enemyMat: {fileID: 2100000, guid: 694cfb360043ef54387250ff86776a58, type: 2}
 --- !u!1001 &2135833908
 PrefabInstance:
   m_ObjectHideFlags: 0

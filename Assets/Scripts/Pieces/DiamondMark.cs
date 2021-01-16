@@ -10,6 +10,11 @@ public class DiamondMark : MonoBehaviour
     private float heightBuffer;
     private float lerpSpeed;
 
+    public Material friendMat;
+    public Material enemyMat;
+    private int matIndex;
+    private List<Material> mats;
+
     void Start()
     {
         desiredPos = transform.position;
@@ -17,12 +22,26 @@ public class DiamondMark : MonoBehaviour
         desiredScale = originalScale;
         heightBuffer = 0.5f;
         lerpSpeed = 7.0f;
+        mats = new List<Material>();
+        mats.Add(friendMat);
+        mats.Add(enemyMat);
+        matIndex = 0;
+        SetMaterial(matIndex);
     }
 
     void Update()
     {
         this.transform.position = Vector3.Lerp(transform.position, desiredPos, lerpSpeed * Time.deltaTime);
         this.transform.localScale = Vector3.Lerp(transform.localScale, desiredScale, lerpSpeed * Time.deltaTime);
+    }
+
+    private void SetMaterial(int i)
+    {
+        if (i != matIndex)
+        {
+            transform.GetChild(0).GetComponent<Renderer>().material = mats[i];
+            matIndex = i;
+        }
     }
 
     // Pos of the piece. Will be increased to float above.
@@ -33,6 +52,12 @@ public class DiamondMark : MonoBehaviour
         d += new Vector3(0, height + heightBuffer, 0);
         desiredPos = d;
         Hide(false);
+        if (p.team == p.board.team)
+        {
+            SetMaterial(0);
+            return;
+        }
+        SetMaterial(1);
     }
 
     public void Hide(bool b)

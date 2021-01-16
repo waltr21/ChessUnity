@@ -18,6 +18,12 @@ public class ChessPiece : MonoBehaviour
     private float speed = 5.0f;
     private float heightVal = 0.25f;
 
+    // private float placeSpeed = 0.75f;
+    private Vector3 startPlace;
+    private Vector3 endPlace;
+    private float placeTime;
+    private float placeHeight = 5.0f;
+
     /**
      * 0 - Dead
      * 1 - alive;
@@ -28,18 +34,45 @@ public class ChessPiece : MonoBehaviour
     public void Start()
     {
         this.transform.position = new Vector3(this.transform.position.x, 50F, this.transform.position.z);
+        //startPlace = new Vector3(0, 0, 0);
+        //endPlace = new Vector3(0, 0, 0);
+    }
+
+    public ChessPiece()
+    {
+        this.row = 0;
+        this.col = 0;
+        this.team = 0;
+    }
+
+    // Animation for lifting the pieces up and placing them down on the board.
+    private void GetAnimationPos()
+    {
+        placeTime += Time.deltaTime * 1.5f;
+        if (1 - placeTime > 0)
+        {
+            Vector3 midPlace = (startPlace + endPlace) * 0.5f;
+            midPlace.y += placeHeight;
+            var temp = Mathf.Pow(1 - placeTime, 2) * startPlace + 2 * (1 - placeTime) * placeTime * midPlace + Mathf.Pow(placeTime, 2) * endPlace;
+            desiredPos = temp;
+        }
+        else
+        {
+            startPlace = transform.position;
+        }
     }
 
     public void Update()
     {
+        GetAnimationPos();
         this.transform.position = Vector3.Lerp(this.transform.position, this.desiredPos, 5.0f * Time.deltaTime);
         if (selected)
         {
-            Animate();
+            SelectedAnimate();
         }
     }
 
-    public void Animate()
+    public void SelectedAnimate()
     {
         transform.position = new Vector3(transform.position.x, (heightVal + (Mathf.Sin((Time.time - animateStamp) * speed) * heightVal)), transform.position.z);
     }
@@ -53,13 +86,6 @@ public class ChessPiece : MonoBehaviour
     public void ResetAnimation()
     {
         selected = false;
-    }
-
-    public ChessPiece()
-    {
-        this.row = 0;
-        this.col = 0;
-        this.team = 0;
     }
 
     public void SetId(int n)
@@ -84,6 +110,8 @@ public class ChessPiece : MonoBehaviour
     public void Travel(Vector3 desired)
     {
         this.desiredPos = new Vector3(desired.x, 0, desired.z);
+        placeTime = 0f;
+        endPlace = new Vector3(desired.x, 0, desired.z);
     }
 
     public bool Move(int r, int c, bool sendPacket=true)

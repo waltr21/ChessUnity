@@ -66,6 +66,8 @@ MonoBehaviour:
   Id: 
   capturedPos: {x: 0, y: 0, z: 0}
   captured: 0
+  selected: 0
+  animateStamp: 0
   state: 0
 --- !u!1001 &3772477256615677260
 PrefabInstance:
