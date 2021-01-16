@@ -41,14 +41,14 @@ public class User_Actions : MonoBehaviour
             UserClick();
     }
 
-    private void SetPointer()
-    {
-        if (cursorIndex != 1)
-        {
-            cursorIndex = 1;
-            Cursor.SetCursor(pointer, hotSpot, cursorMode);
-        }
-    }
+    //private void SetPointer()
+    //{
+    //    if (cursorIndex != 1)
+    //    {
+    //        cursorIndex = 1;
+    //        Cursor.SetCursor(pointer, hotSpot, cursorMode);
+    //    }
+    //}
 
     private void SetBasic()
     {
@@ -80,6 +80,15 @@ public class User_Actions : MonoBehaviour
                         this.board.UpdateGameState();
                         this.board.ResetAllAnimations();
                         this.board.CheckPromotion();
+                    }
+                }
+                else
+                {
+                    if (temp.piece.team == board.team)
+                    {
+                        selected = temp.piece;
+                        board.ShowValidCells(selected);
+                        temp.piece.SetAnimate();
                     }
                 }
             }
@@ -182,7 +191,7 @@ public class User_Actions : MonoBehaviour
             if (cell.piece == null && cell.isHighlighted)
             {
                 cell.desiredPos = new Vector3(curHit.position.x, 0.25f, curHit.position.z);
-                SetPointer();
+                //SetPointer();
             }
             else
             {
@@ -204,7 +213,7 @@ public class User_Actions : MonoBehaviour
             ChessPiece piece = this.board.GetPiece(hit.transform.parent);
             if (piece.captured) return;
             diamond.SetDesired(piece);
-            SetPointer();
+            //SetPointer();
         }
     }
 }
